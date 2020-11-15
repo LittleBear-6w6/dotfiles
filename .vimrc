@@ -29,16 +29,26 @@ Plug 'bronson/vim-trailing-whitespace'
 Plug 'altercation/vim-colors-solarized'
 Plug 'mattn/emmet-vim'
 Plug 'andymass/vim-matchup'
+
 " SnipMateのインストール
-Plug 'MarcWeber/vim-addon-mw-utils'
-Plug 'tomtom/tlib_vim'
-Plug 'garbas/vim-snipmate'
-Plug 'honza/vim-snippets'
+" ※vim-vsnipインストールのため削除
+"Plug 'MarcWeber/vim-addon-mw-utils'
+"Plug 'tomtom/tlib_vim'
+"Plug 'garbas/vim-snipmate'
+"Plug 'honza/vim-snippets'
+
 " vim-lsp (Language Server を利用するための Language Server Clientプラグイン)
-Plug 'prabirshrestha/async.vim'
+"Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
+
+" vim-vsnipのインストール
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+
+" vim-lsp-settingsのインストール
+Plug 'mattn/vim-lsp-settings'
 
 
 " vim-plugの設定終了
@@ -210,6 +220,10 @@ augroup lsp_install
 	autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
 
+let g:lsp_diagnostics_echo_cursor = 0
+let g:lsp_diagnostics_float_cursor = 1
+
+
 " python-language-serverがインストールされている場合は登録する
 if executable('pyls')
 	au User lsp_setup call lsp#register_server({
@@ -218,6 +232,27 @@ if executable('pyls')
 				\ 'whitelist': ['python'],
 				\ })
 endif
+
+" [vim-vsnip]
+" ※ ~/.vsnipに各言語のスニペットを保存している。
+imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+
+" Expand or jump
+imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+
+" Jump forward or backward
+imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+
+nmap        s   <Plug>(vsnip-select-text)
+xmap        s   <Plug>(vsnip-select-text)
+nmap        S   <Plug>(vsnip-cut-text)
+xmap        S   <Plug>(vsnip-cut-text)
+
 
 "-------------------------------------------------------------------------------------
 "TeraTerm経由だと見づらいため、停止中
