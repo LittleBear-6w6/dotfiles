@@ -34,6 +34,12 @@ Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
 Plug 'honza/vim-snippets'
+" vim-lsp (Language Server を利用するための Language Server Clientプラグイン)
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+
 
 " vim-plugの設定終了
 call plug#end()
@@ -181,6 +187,37 @@ autocmd colorScheme * highlight StatusLine ctermfg=34
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 map <C-n> : NERDTreeToggle<CR>
+
+" [vim-lsp]
+" 基本的な設定
+" Language Serverが有効になったら設定を行う
+function! s:on_lsp_buffer_enabled() abort
+	" omnifuncを設定（補完には必須）
+	setlocal omnifunc=lsp#complete
+	" 画面左にエラー情報を表示するエリアを表示
+	setlocal signcolumn=yes
+	" gdで定義位置ジャンプをするように
+	nmap <buffer> gd <plug>(lsp-definition)
+	" F2キーでシンボルのリネームをするように
+	nmap <buffer> <f2> <plug>(lsp-rename)
+	" バッファの保存時にドキュメントをフォーマット
+	autocmd BufWritePre <buffer> LspDocumentFormatSync
+endfunction
+
+" バッファでLanguage Serverが有効になった際に関数を呼ぶ
+augroup lsp_install
+	au!
+	autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+" python-language-serverがインストールされている場合は登録する
+if executable('pyls')
+	au User lsp_setup call lsp#register_server({
+				\ 'name': 'pyls',
+				\ 'cmd': {server_info->['pyls']},
+				\ 'whitelist': ['python'],
+				\ })
+endif
 
 "-------------------------------------------------------------------------------------
 "TeraTerm経由だと見づらいため、停止中
