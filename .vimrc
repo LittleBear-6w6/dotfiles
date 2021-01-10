@@ -50,6 +50,11 @@ Plug 'hrsh7th/vim-vsnip-integ'
 " vim-lsp-settingsのインストール
 Plug 'mattn/vim-lsp-settings'
 
+" fernのインストール
+Plug 'lambdalisue/nerdfont.vim'
+Plug 'lambdalisue/fern.vim'
+Plug 'lambdalisue/fern-renderer-nerdfont.vim'
+
 
 " vim-plugの設定終了
 call plug#end()
@@ -192,6 +197,7 @@ autocmd colorScheme * highlight StatusLine ctermfg=34
 " 以下導入したプラグインの設定を記述
 " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 " [NERDTree]
+" fernプラグインも使用しているが、こちらも便利なので残す。
 " カレントディレクトリのファイルの一覧を表示する
 " vim起動時に何も開かれていないときは、自動で起動
 autocmd StdinReadPre * let s:std_in=1
@@ -252,6 +258,33 @@ nmap        s   <Plug>(vsnip-select-text)
 xmap        s   <Plug>(vsnip-select-text)
 nmap        S   <Plug>(vsnip-cut-text)
 xmap        S   <Plug>(vsnip-cut-text)
+
+"[fern]
+let g:fern#renderer = 'nerdfont'
+
+" Vim起動時にfernを開く
+"augroup __fern__
+"	au!
+"	autocmd VimEnter * ++nested Fern . -drawer -stay -keep -toggle -reveal=%
+"	autocmd FileType fern call s:fern_setup()
+"augroup END
+
+" 「,t」でfernの表示／非表示をトグル
+nnoremap ,t :<c-u>Fern . -drawer -stay -keep -toggle -reveal=%<cr>
+
+"fernのウィンドウの開き方を変更
+function! s:fern_setup() abort
+	nnoremap <buffer> <nowait> q :<c-u>quit<cr>
+	nmap <buffer>
+	\ <Plug>(fern-action-open)
+	\ <Plug>(fern-action-open:select)
+endfunction
+
+" fernを起動（開いた）際に開き方変更Functionを実行
+augroup __fern__
+	au!
+	autocmd FileType fern call s:fern_setup()
+augroup END
 
 
 "-------------------------------------------------------------------------------------
