@@ -55,6 +55,15 @@ Plug 'lambdalisue/nerdfont.vim'
 Plug 'lambdalisue/fern.vim'
 Plug 'lambdalisue/fern-renderer-nerdfont.vim'
 
+" CtrlPのインストール
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'mattn/ctrlp-matchfuzzy'
+Plug 'mattn/ctrlp-git'
+
+"CtrPでコマンドパレット機能を実現のため下記拡張をインストール
+Plug 'mattn/ctrlp-launcher'
+Plug 'mattn/ctrlp-lsp'
+
 
 " vim-plugの設定終了
 call plug#end()
@@ -286,6 +295,11 @@ augroup __fern__
 	autocmd FileType fern call s:fern_setup()
 augroup END
 
+"[CtrlP]
+nmap <c-e> <plug>(ctrlp-launcher)
+nnoremap ,g :<c-u>CtrlPGitFiles<cr>
+nnoremap ,v :<c-u>CtrlPLauncher lsp<cr>
+nnoremap ,, :<c-u>CtrlPMRUFiles<cr>
 
 "-------------------------------------------------------------------------------------
 "TeraTerm経由だと見づらいため、停止中
