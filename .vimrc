@@ -29,41 +29,11 @@ Plug 'bronson/vim-trailing-whitespace'
 Plug 'altercation/vim-colors-solarized'
 Plug 'mattn/emmet-vim'
 Plug 'andymass/vim-matchup'
-
 " SnipMateのインストール
-" ※vim-vsnipインストールのため削除
-"Plug 'MarcWeber/vim-addon-mw-utils'
-"Plug 'tomtom/tlib_vim'
-"Plug 'garbas/vim-snipmate'
-"Plug 'honza/vim-snippets'
-
-" vim-lsp (Language Server を利用するための Language Server Clientプラグイン)
-"Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-
-" vim-vsnipのインストール
-Plug 'hrsh7th/vim-vsnip'
-Plug 'hrsh7th/vim-vsnip-integ'
-
-" vim-lsp-settingsのインストール
-Plug 'mattn/vim-lsp-settings'
-
-" fernのインストール
-Plug 'lambdalisue/nerdfont.vim'
-Plug 'lambdalisue/fern.vim'
-Plug 'lambdalisue/fern-renderer-nerdfont.vim'
-
-" CtrlPのインストール
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'mattn/ctrlp-matchfuzzy'
-Plug 'mattn/ctrlp-git'
-
-"CtrPでコマンドパレット機能を実現のため下記拡張をインストール
-Plug 'mattn/ctrlp-launcher'
-Plug 'mattn/ctrlp-lsp'
-
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+Plug 'garbas/vim-snipmate'
+Plug 'honza/vim-snippets'
 
 " vim-plugの設定終了
 call plug#end()
@@ -81,7 +51,7 @@ call plug#end()
 "日本語helpの設定
 "事前にシェルで以下のコマンドを実行してください。
 "初回時：
-" $git clone --depth=1 https://github.com/vim-jp/vimdoc-ja.git  ~/.vim/pack/my/opt/vimdoc-ja
+" $tit clone --depth=1 https://github.com/vim-jp/vimdoc-ja.git  ~/.vim/pack/my/opt/vimdoc-ja
 "更新時：
 " $cd ~/.vim/pack/my/opt/vimdoc-ja
 " $git pull
@@ -206,100 +176,11 @@ autocmd colorScheme * highlight StatusLine ctermfg=34
 " 以下導入したプラグインの設定を記述
 " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 " [NERDTree]
-" fernプラグインも使用しているが、こちらも便利なので残す。
 " カレントディレクトリのファイルの一覧を表示する
 " vim起動時に何も開かれていないときは、自動で起動
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 map <C-n> : NERDTreeToggle<CR>
-
-" [vim-lsp]
-" 基本的な設定
-" Language Serverが有効になったら設定を行う
-function! s:on_lsp_buffer_enabled() abort
-	" omnifuncを設定（補完には必須）
-	setlocal omnifunc=lsp#complete
-	" 画面左にエラー情報を表示するエリアを表示
-	setlocal signcolumn=yes
-	" gdで定義位置ジャンプをするように
-	nmap <buffer> gd <plug>(lsp-definition)
-	" F2キーでシンボルのリネームをするように
-	nmap <buffer> <f2> <plug>(lsp-rename)
-	" バッファの保存時にドキュメントをフォーマット
-	autocmd BufWritePre <buffer> LspDocumentFormatSync
-endfunction
-
-" バッファでLanguage Serverが有効になった際に関数を呼ぶ
-augroup lsp_install
-	au!
-	autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-augroup END
-
-let g:lsp_diagnostics_echo_cursor = 0
-let g:lsp_diagnostics_float_cursor = 1
-
-
-" python-language-serverがインストールされている場合は登録する
-if executable('pyls')
-	au User lsp_setup call lsp#register_server({
-				\ 'name': 'pyls',
-				\ 'cmd': {server_info->['pyls']},
-				\ 'whitelist': ['python'],
-				\ })
-endif
-
-" [vim-vsnip]
-" ※ ~/.vsnipに各言語のスニペットを保存している。
-imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
-smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
-
-" Expand or jump
-imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-
-" Jump forward or backward
-imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-
-nmap        s   <Plug>(vsnip-select-text)
-xmap        s   <Plug>(vsnip-select-text)
-nmap        S   <Plug>(vsnip-cut-text)
-xmap        S   <Plug>(vsnip-cut-text)
-
-"[fern]
-let g:fern#renderer = 'nerdfont'
-
-" Vim起動時にfernを開く
-"augroup __fern__
-"	au!
-"	autocmd VimEnter * ++nested Fern . -drawer -stay -keep -toggle -reveal=%
-"	autocmd FileType fern call s:fern_setup()
-"augroup END
-
-" 「,t」でfernの表示／非表示をトグル
-nnoremap ,t :<c-u>Fern . -drawer -stay -keep -toggle -reveal=%<cr>
-
-"fernのウィンドウの開き方を変更
-function! s:fern_setup() abort
-	nnoremap <buffer> <nowait> q :<c-u>quit<cr>
-	nmap <buffer>
-	\ <Plug>(fern-action-open)
-	\ <Plug>(fern-action-open:select)
-endfunction
-
-" fernを起動（開いた）際に開き方変更Functionを実行
-augroup __fern__
-	au!
-	autocmd FileType fern call s:fern_setup()
-augroup END
-
-"[CtrlP]
-nmap <c-e> <plug>(ctrlp-launcher)
-nnoremap ,g :<c-u>CtrlPGitFiles<cr>
-nnoremap ,v :<c-u>CtrlPLauncher lsp<cr>
-nnoremap ,, :<c-u>CtrlPMRUFiles<cr>
 
 "-------------------------------------------------------------------------------------
 "TeraTerm経由だと見づらいため、停止中
@@ -309,4 +190,9 @@ nnoremap ,, :<c-u>CtrlPMRUFiles<cr>
 " let g:solarized_termcolors=256
 " colorscheme solarized
 " ------------------------------------------------------------------------------------
-
+"-------------------------------------------------------------------------------------
+"警告「The legacy SnipMate parser is deprecated」に対する対応
+"https://github.com/amix/vimrc/issues/635
+"https://vi.stackexchange.com/questions/40034/how-to-fix-the-legacy-snipmate-parser-is-deprecated
+"-------------------------------------------------------------------------------------
+let g:snipMate={'snippet_version':1}
