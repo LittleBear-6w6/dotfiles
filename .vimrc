@@ -51,7 +51,7 @@ call plug#end()
 "日本語helpの設定
 "事前にシェルで以下のコマンドを実行してください。
 "初回時：
-" $tit clone --depth=1 https://github.com/vim-jp/vimdoc-ja.git  ~/.vim/pack/my/opt/vimdoc-ja
+" $git clone --depth=1 https://github.com/vim-jp/vimdoc-ja.git  ~/.vim/pack/my/opt/vimdoc-ja
 "更新時：
 " $cd ~/.vim/pack/my/opt/vimdoc-ja
 " $git pull
