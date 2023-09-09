@@ -30,10 +30,35 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'mattn/emmet-vim'
 Plug 'andymass/vim-matchup'
 " SnipMateのインストール
-Plug 'MarcWeber/vim-addon-mw-utils'
-Plug 'tomtom/tlib_vim'
-Plug 'garbas/vim-snipmate'
-Plug 'honza/vim-snippets'
+" vim-vsnipインストールのため削除
+" Plug 'MarcWeber/vim-addon-mw-utils'
+" Plug 'tomtom/tlib_vim'
+" Plug 'garbas/vim-snipmate'
+" Plug 'honza/vim-snippets'
+" vim-lsp (Language Server を利用するための Language Server Clientプラグイン)
+" Ref:https://mattn.kaoriya.net/software/vim/20191231213507.htm
+
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+Plug 'mattn/vim-lsp-icons'
+
+" fernのインストール（ファイラー）
+" Plug 'lambdalisue/nerdfont.vim'
+" Plug 'lambdalisue/fern.vim'
+" Plug 'lambdalisue/fern-renderer-nerdfont.vim'
+" Plug 'lambdalisue/glyph-palette.vim'
+" Plug 'lambdalisue/fern-git-status.vim'
+" Plug 'ryanoasis/vim-devicons'
+
+"ctrlpのインストール
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'mattn/ctrlp-launcher'
+Plug 'mattn/ctrlp-matchfuzzy'
+Plug 'mattn/ctrlp-lsp'
 
 " vim-plugの設定終了
 call plug#end()
@@ -195,4 +220,121 @@ map <C-n> : NERDTreeToggle<CR>
 "https://github.com/amix/vimrc/issues/635
 "https://vi.stackexchange.com/questions/40034/how-to-fix-the-legacy-snipmate-parser-is-deprecated
 "-------------------------------------------------------------------------------------
-let g:snipMate={'snippet_version':1}
+" let g:snipMate={'snippet_version':1}
+" ------------------------------------------------------------------------------------
+"  [vim-lsp]
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> K <plug>(lsp-hover)
+    nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
+    nmap <buffer> <f2> <plug>(lsp-rename)
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+    
+    " refer to doc to add more commands
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+let g:lsp_diagnostics_echo_cursor = 1
+let g:lsp_diagnostics_float_cursor = 1
+
+" [vim-vsnip]
+" NOTE: You can use other key to expand snippet.
+
+" Expand
+imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+
+" Expand or jump
+imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+
+" Jump forward or backward
+imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+
+" Select or cut text to use as $TM_SELECTED_TEXT in the next snippet.
+" See https://github.com/hrsh7th/vim-vsnip/pull/50
+nmap        s   <Plug>(vsnip-select-text)
+xmap        s   <Plug>(vsnip-select-text)
+nmap        S   <Plug>(vsnip-cut-text)
+xmap        S   <Plug>(vsnip-cut-text)
+
+" If you want to use snippet for multiple filetypes, you can `g:vsnip_filetypes` for it.
+let g:vsnip_filetypes = {}
+let g:vsnip_filetypes.javascriptreact = ['javascript']
+let g:vsnip_filetypes.typescriptreact = ['typescript']
+
+"" [fern]
+"let g:fern#renderer = "nerdfont"
+"
+"augroup my-glyph-palette
+"  autocmd! *
+"  autocmd FileType fern call glyph_palette#apply()
+"  autocmd FileType nerdtree,startify call glyph_palette#apply()
+"augroup END
+"
+"" Vim起動時にfernを開く
+"augroup __fern__
+"	au!
+"	autocmd VimEnter * ++nested Fern . -drawer -stay -keep -toggle -reveal=%
+"	autocmd FileType fern call s:fern_setup()
+"augroup END
+"
+"" 「,t」でfernの表示／非表示をトグル
+"nnoremap ,t :<c-u>Fern . -drawer -stay -keep -toggle -reveal=%<cr>
+"
+""fernのウィンドウの開き方を変更
+"function! s:fern_setup() abort
+"	nnoremap <buffer> <nowait> q :<c-u>quit<cr>
+"	nmap <buffer>
+"	\ <Plug>(fern-action-open)
+"	\ <Plug>(fern-action-open:select)
+"endfunction
+"
+"" fernを起動（開いた）際に開き方変更Functionを実行
+"augroup __fern__
+"	au!
+"	autocmd FileType fern call s:fern_setup()
+"augroup END
+
+" [ctrlp]
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_root_markers = ['pom.xml', '.p4ignore']
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+let g:ctrlp_user_command = 'find %s -type f'
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
+nmap <c-e> <plug>(ctrlp-launcher)
+nnoremap ,g :<c-u>CtrlPGitFiles<cr>
+nnoremap ,v :<c-u>CtrlPLauncher lsp<cr>
+nnoremap ,, :<c-u>CtrlPMRUFiles<cr>
+
+let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
