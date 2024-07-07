@@ -22,3 +22,14 @@ select-history(){
 }
 # シェル関数にキーボードショートカット[Ctrl + R]を割り当てる
 bind -x '"\C-r": select-history'
+
+# direnv
+eval "$(direnv hook bash)"
+
+# Kubectl autocomplete configure
+source <(kubectl completion bash)
+alias k=kubectl
+complete -F __start_kubectl k
+
+# Krew:kubctl plugin manager
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
