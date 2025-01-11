@@ -224,6 +224,9 @@ map <C-n> : NERDTreeToggle<CR>
 " ------------------------------------------------------------------------------------
 "  [vim-lsp]
 function! s:on_lsp_buffer_enabled() abort
+    if &buftype ==# 'nofile' || &filetype =~# '^\(quickrun\)' || getcmdwintype() ==# ':'
+        return
+    endif
     setlocal omnifunc=lsp#complete
     setlocal signcolumn=yes
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
