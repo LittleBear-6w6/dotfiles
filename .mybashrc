@@ -33,3 +33,6 @@ complete -F __start_kubectl k
 
 # Krew:kubctl plugin manager
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+# Golang installation
+export PATH=$PATH:/usr/local/go/bin
