@@ -29,10 +29,21 @@ fi
 ```
 
 ## Setup vim
-```bash:Setupvim
+1. Install Japanese manual
+```bash:Install Japanese manual
 $cd
 $ mkdir -p .vim/pack/my/start
 $ mkdir -p .vim/pack/my/opt
 $ cd !$
 $ git clone https://github.com/vim-jp/vimdoc-ja.git
 ```
+2. Install vim-plug
+```bash:Install vim-plug
+$ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+```
+3. Setup plugin on vim
+(1)Execute vim
+(2)Input `:PlugInstall`
+Reference:https://github.com/junegunn/vim-plug
