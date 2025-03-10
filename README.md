@@ -12,7 +12,7 @@ Nothing now.
 Repository of h-eastさん: https://github.com/h-east/dotfiles_simple
 
 #Usage
-1. Clone git repository
+## Clone git repository
 ```bash:Usage
 $ mkdir dotfiles
 $ cd dotfiles
@@ -20,10 +20,19 @@ $ git clone https://github.com/LittleBear-6w6/dotfiles.git
 $ ln -s ~/dotfiles/.vimrc ~/.vimrc
 $ ln -s ~/dotfiles/.mybashrc ~/.mybashrc
 ```
-2. Edit .bashrc
+## Edit .bashrc
 Add below sentence to `.bashrc`
 ```config:.bashrc
 if [ -f ~/.mybashrc ]; then
         . ~/.mybashrc
 fi
+```
+
+## Setup vim
+```bash:Setupvim
+$cd
+$ mkdir -p .vim/pack/my/start
+$ mkdir -p .vim/pack/my/opt
+$ cd !$
+$ git clone https://github.com/vim-jp/vimdoc-ja.git
 ```
